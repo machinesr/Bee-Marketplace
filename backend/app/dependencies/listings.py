@@ -1,0 +1,5 @@
+from app.repositories.supabase_listing_repository import SupabaseListingRepository
+from app.services.listing_service import ListingService
+
+listing_repository = SupabaseListingRepository()
+listing_service = ListingService(listing_repository)
