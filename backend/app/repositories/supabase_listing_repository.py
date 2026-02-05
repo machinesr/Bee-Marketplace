@@ -14,3 +14,9 @@ class SupabaseListingRepository(ListingRepository):
             .execute()
         )
         return ListingRead(**res.data[0]) if res.data else None
+    
+    def create(self, data):
+        pass
+
+    def update(self, id, data):
+        pass
