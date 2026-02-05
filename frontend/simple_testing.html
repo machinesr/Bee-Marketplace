@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Role B Verification</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        body { font-family: sans-serif; padding: 40px; max-width: 600px; margin: auto; }
+        button { padding: 10px 20px; font-size: 1.2rem; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; }
+        button:hover { background-color: #0056b3; }
+        code { background: #f4f4f4; padding: 10px; border-radius: 4px; display: block; word-break: break-all; margin-top: 10px; }
+        .hidden { display: none; }
+    </style>
+
+    <script>
+
+        const MY_SUPABASE_URL = "dari .env";
+        const MY_SUPABASE_KEY = ".env juga";
+
+        let supabaseClient; 
+
+        try {
+            supabaseClient = window.supabase.createClient(MY_SUPABASE_URL, MY_SUPABASE_KEY, {
+                auth: {
+                    persistSession: true 
+                }
+            });
+            console.log("✅ Supabase Initialized");
+        } catch (err) {
+            console.error("❌ Failed to initialize:", err);
+            alert("Check console for API Key errors");
+        }
+
+        async function login() {
+            if (!supabaseClient) return;
+
+            const { error } = await supabaseClient.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: window.location.href
+                }
+            });
+
+            if (error) alert("Login Error: " + error.message);
+        }
+
+        window.onload = async () => {
+            if (!supabaseClient) return;
+            
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            
+            if (session) {
+                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('result-section').classList.remove('hidden');
+                document.getElementById('user-email').innerText = session.user.email;
+                document.getElementById('access-token').innerText = session.access_token;
+            }
+        };
+    </script>
+</head>
+<body>
+    <h1>Final Check</h1>
+    
+    <div id="login-section">
+        <p>Step 1: Log in with Google</p>
+        <button onclick="login()">Log in with Google</button>
+    </div>
+
+    <div id="result-section" class="hidden">
+        <h3>✅ Login Successful!</h3>
+        <p><strong>Email:</strong> <span id="user-email"></span></p>
+        
+        <h4>Step 2: Copy this Token</h4>
+        <code id="access-token"></code>
+    </div>
+</body>
+</html>
