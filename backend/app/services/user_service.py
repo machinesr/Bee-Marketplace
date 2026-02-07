@@ -17,12 +17,12 @@ def get_or_create_user(user_id: UUID) -> UserRead:
         .table("users")
         .select("*")
         .eq("id", str(user_id))
-        .single()
+        .limit(1)
         .execute()  
     )
 
     if response.data:
-        return UserRead(**response.data)
+        return UserRead(**response.data[0])
 
     # user doesn't exist yet, make it 
     new_user = {
@@ -31,12 +31,13 @@ def get_or_create_user(user_id: UUID) -> UserRead:
         "anonymous_alias": _generate_anonymous_alias(),
     }
 
-    insert_response = {
+    insert_response = (
         supabase
         .table("users")
         .insert(new_user)
-        .single()
         .execute()
-    }
+    )
 
-    return UserRead(**insert_response.data)
+
+
+    return UserRead(**insert_response.data[0])

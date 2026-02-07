@@ -1,11 +1,13 @@
 from fastapi import FastAPI
-from app.api.routes.orders import router as orders_router
+from fastapi.security import HTTPBearer
 from app.api.routes import listings
+from app.api.routes import user
 
 app = FastAPI(title="Bee Marketplace API")
+security = HTTPBearer()
 
-app.include_router(orders_router, prefix="/api/v1")
 app.include_router(listings.router)
+app.include_router(user.router)
 
 
 @app.get("/")
