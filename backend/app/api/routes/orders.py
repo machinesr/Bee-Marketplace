@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from app.schemas.order import OrderCreate
 from app.db.client import supabase
-from app.api.deps import get_current_user  
+from app.dependencies.auth import get_current_user  
 
 router = APIRouter()
 
