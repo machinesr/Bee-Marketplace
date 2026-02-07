@@ -1,17 +1,15 @@
-from fastapi import HTTPException, Header
+from fastapi import HTTPException, Header, Depends
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 import jwt
 from jwt import InvalidTokenError
 from app.core.config import settings
+from uuid import UUID
 
-def get_current_user(authorization: str = Header(...)):
-    
-    if not authorization.startswith("Bearer "):
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid authorization header format",
-        )
+Security = HTTPBearer()
 
-    token = authorization.removeprefix("Bearer ").strip()
+def get_current_user_id(credentials: HTTPAuthorizationCredentials = Depends(Security)) -> UUID:
+
+    token = credentials.credentials
 
     if not token:
         raise HTTPException(
