@@ -1,7 +1,8 @@
 from uuid import UUID
 from app.db.client import supabase
-from app.schemas.user import UserRead
+from app.schemas.user import UserRead, UserUpdate
 import random
+
 
 def _generate_display_name() -> str:
     return "New User"
@@ -41,3 +42,21 @@ def get_or_create_user(user_id: UUID) -> UserRead:
 
 
     return UserRead(**insert_response.data[0])
+
+def update_user(user_id : UUID, updates: UserUpdate) -> UserUpdate:
+
+    payload = updates.model_dump(exclude_none = True)
+
+    if not payload: 
+        return get_or_create_user(user_id)
+
+    response = ( 
+        supabase
+        .table("users")
+        .update(payload)
+        .eq("id", str(user_id))
+        .execute()
+    )
+
+    if response.data:
+        return UserUpdate(**response.data[0])
